@@ -70,13 +70,13 @@ public final class FormattedStatisticSummary extends StatisticSummary {
         return ncss;
     }
 
-    private static String diff(long a, long b, String name) {
-        if (a == b) {
-            return "";
-        } else if (a < b) {
-            return "<li>" + name + " (+" + (b - a) + ")</li>";
+    private static String diff(long old, long new_, String name) {
+        if (old == new_) {
+            return "<li>" + name + ": " + new_ + " (No change)</li>";
+        } else if (old < new_) {
+            return "<li>" + name + ": " + new_ + " (+" + (new_ - old) + ")</li>";
         } else { // if (a < b)
-            return "<li>" + name + " (-" + (a - b) + ")</li>";
+            return "<li>" + name + ": " + new_ + " (-" + (old - new_) + ")</li>";
         }
     }
 
@@ -86,9 +86,9 @@ public final class FormattedStatisticSummary extends StatisticSummary {
     @Override
     public String getHtmlSummary() {
         return "<ul>"
-                + diff(wasCcn, ccn, "ccn")
-                + diff(wasFunctions, functions, "functions")
-                + diff(wasNcss, ncss, "ncss")
+                + diff(wasCcn, ccn, "CCN")
+                + diff(wasFunctions, functions, "Functions")
+                + diff(wasNcss, ncss, "NCSS")
                 + "</ul>";
     }
 
