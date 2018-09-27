@@ -37,25 +37,37 @@ public final class FormattedStatisticSummary extends StatisticSummary {
     private final long wasFunctions;
     private final long wasNcss;
     private final long wasCcn;
+    private final long wasCcnViolations;
+    private final long wasNcssViolations;
     private final long functions;
     private final long ncss;
     private final long ccn;
+    private final long ccnViolations;
+    private final long ncssViolations;
 
-    public FormattedStatisticSummary(long wasCcn, long wasFunctions, long wasNcss, long ccn, long functions, long ncss) {
+    public FormattedStatisticSummary(long wasCcn, long wasFunctions, long wasNcss,
+            long wasCcnViolations, long wasNcssViolations, long ccn, long functions, 
+            long ncss, long ccnViolations, long ncssViolations) {
         this.wasFunctions = wasFunctions;
         this.wasNcss = wasNcss;
         this.wasCcn = wasCcn;
+        this.wasCcnViolations = wasCcnViolations;
+        this.wasNcssViolations = wasNcssViolations;
         this.functions = functions;
         this.ncss = ncss;
         this.ccn = ccn;
+        this.ccnViolations = ccnViolations;
+        this.ncssViolations = ncssViolations;
+        
     }
 
     public FormattedStatisticSummary(long ccn, long functions, long ncss) {
-        this(0,0,0, ccn, functions, ncss);
+        this(0,0,0,0,0, ccn, functions, ncss, 0, 0);
     }
 
     public FormattedStatisticSummary(@Nonnull Statistic was, @Nonnull Statistic now) {
-        this(was.getCcn(), was.getFunctions(), was.getNcss(), now.getCcn(), now.getFunctions(), now.getNcss());
+        this(was.getCcn(), was.getFunctions(), was.getNcss(), was.getCcnViolations(), was.getNcssViolations(),
+                now.getCcn(), now.getFunctions(), now.getNcss(), now.getCcnViolations(), now.getNcssViolations());
     }
 
     public long getCcn() {
@@ -89,6 +101,8 @@ public final class FormattedStatisticSummary extends StatisticSummary {
                 + diff(wasCcn, ccn, "CCN")
                 + diff(wasFunctions, functions, "Functions")
                 + diff(wasNcss, ncss, "NCSS")
+                + diff(wasCcnViolations, ccnViolations, "CCN Violations")
+                + diff(wasNcssViolations, ncssViolations, "NCSS Violations")
                 + "</ul>";
     }
 
