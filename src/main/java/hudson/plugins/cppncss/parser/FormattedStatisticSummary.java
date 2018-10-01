@@ -33,7 +33,8 @@ import javax.annotation.Nonnull;
  */
 @Restricted(NoExternalUse.class)
 public final class FormattedStatisticSummary extends StatisticSummary {
-
+    
+    private boolean doCompare = true;
     private final long wasFunctions;
     private final long wasNcss;
     private final long wasCcn;
@@ -61,8 +62,9 @@ public final class FormattedStatisticSummary extends StatisticSummary {
         
     }
 
-    public FormattedStatisticSummary(long ccn, long functions, long ncss) {
-        this(0,0,0,0,0, ccn, functions, ncss, 0, 0);
+    public FormattedStatisticSummary(long ccn, long functions, long ncss, long cnnViolations, long ncssViolations) {
+        this(0,0,0,0,0, ccn, functions, ncss, cnnViolations, ncssViolations);
+        doCompare = false;
     }
 
     public FormattedStatisticSummary(@Nonnull Statistic was, @Nonnull Statistic now) {
@@ -82,14 +84,19 @@ public final class FormattedStatisticSummary extends StatisticSummary {
         return ncss;
     }
 
-    private static String diff(long old, long new_, String name) {
-        if (old == new_) {
-            return "<li>" + name + ": " + new_ + " (No change)</li>";
-        } else if (old < new_) {
-            return "<li>" + name + ": " + new_ + " (+" + (new_ - old) + ")</li>";
-        } else { // if (a < b)
-            return "<li>" + name + ": " + new_ + " (-" + (old - new_) + ")</li>";
+    private String diff(long old, long new_, String name) {
+        String diffString = "<li>" + name + ": " + new_ + " ";
+        if (doCompare) {
+            if (old == new_) {
+                diffString += "(No change)";
+            } else if (old < new_) {
+                diffString += "(+" + (new_ - old) + ")";
+            } else { // if (a < b)
+                diffString += "(-" + (old - new_) + ")";
+            }
         }
+        diffString += "</li>";
+        return diffString;
     }
 
     /**

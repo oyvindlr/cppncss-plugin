@@ -11,8 +11,7 @@ public class FormattedStatisticSummaryTest {
     @Test
     public void getHtmlSummaryReportsCorrectAbsoluteAndDifferences() {
         FormattedStatisticSummary fss = new FormattedStatisticSummary(10, 11, 12, 2, 2, 7, 6, 14, 1, 3);
-        assertEquals(expectedSummary,
-                fss.getHtmlSummary());
+        assertEquals(expectedSummary, fss.getHtmlSummary());
     }
 
     @Test

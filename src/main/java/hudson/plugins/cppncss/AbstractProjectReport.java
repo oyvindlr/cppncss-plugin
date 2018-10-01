@@ -3,6 +3,7 @@ package hudson.plugins.cppncss;
 import hudson.model.Job;
 import hudson.model.ProminentProjectAction;
 import hudson.model.Run;
+import hudson.plugins.cppncss.parser.StatisticSummary;
 import hudson.plugins.cppncss.parser.StatisticsResult;
 import hudson.plugins.cppncss.parser.StatisticsTotalResult;
 import hudson.plugins.helpers.AbstractProjectAction;
@@ -176,5 +177,14 @@ public abstract class AbstractProjectReport<T extends Job<?, ?>> extends Abstrac
     public int getGraphHeight() {
         return 200;
     }
+    
+    /**
+     * The summary of this build report for display on the build index page.
+     */
+    @Override
+    public StatisticSummary getStatisticSummary() {        
+        return getTotals().getStatisticSummary();
+    }
+
 
 }

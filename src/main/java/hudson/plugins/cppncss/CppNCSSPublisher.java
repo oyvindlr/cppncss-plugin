@@ -7,6 +7,7 @@ import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
+import hudson.model.InvisibleAction;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
@@ -77,9 +78,9 @@ public class CppNCSSPublisher extends Recorder implements SimpleBuildStep {
     /**
      * {@inheritDoc}
      */
-    public Action getProjectAction(AbstractProject<?, ?> project) {
+    /*public Action getProjectAction(AbstractProject<?, ?> project) {
         return new CppNCSSProjectIndividualReport(project, functionCcnViolationThreshold, functionNcssViolationThreshold);
-    }
+    } */
 
     public BuildStepMonitor getRequiredMonitorService() {
         return BuildStepMonitor.NONE;
@@ -97,7 +98,6 @@ public class CppNCSSPublisher extends Recorder implements SimpleBuildStep {
         run.addAction(getter);
         try {
             BuildProxy.doPerform(newGhostwriter(), run, workspace, listener);
-            listener.getLogger().println("RAIRAIIRA");
         } catch (IOException | InterruptedException e) {
             run.setResult(Result.FAILURE);
             e.printStackTrace(listener.getLogger());
@@ -133,24 +133,9 @@ public class CppNCSSPublisher extends Recorder implements SimpleBuildStep {
      * methods implemented from {@link Action} return null.
      *
      */
-    protected static class ActionGetter implements SimpleBuildStep.LastBuildAction {
+    protected static class ActionGetter extends InvisibleAction implements SimpleBuildStep.LastBuildAction {
 
         private Collection<Action> projectActions = new ArrayList<Action>();
-
-        @Override
-        public String getIconFileName() {
-            return null;
-        }
-
-        @Override
-        public String getDisplayName() {
-            return null;
-        }
-
-        @Override
-        public String getUrlName() {
-            return null;
-        }
 
         @Override
         public Collection<? extends Action> getProjectActions() {

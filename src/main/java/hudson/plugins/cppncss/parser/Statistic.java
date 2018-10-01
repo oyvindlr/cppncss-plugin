@@ -433,7 +433,7 @@ public class Statistic implements Serializable {
      * @since TODO
      */
     public StatisticSummary getStatisticSummary() {
-        return new FormattedStatisticSummary(ccn, functions, ncss);
+        return new FormattedStatisticSummary(ccn, functions, ncss, ccnViolations, ncssViolations);
     }
 
     /**

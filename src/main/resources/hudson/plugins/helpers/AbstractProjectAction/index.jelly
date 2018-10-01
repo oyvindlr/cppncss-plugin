@@ -10,6 +10,7 @@
 
                 <h2>${it.graphName}</h2>
                 <st:include page="normalGraph.jelly"/>
+                <st:include page="summary.jelly" it="${it.statisticSummary}"/>
             </j:if>
             <st:include page="reportDetail.jelly"/>
         </l:main-panel>

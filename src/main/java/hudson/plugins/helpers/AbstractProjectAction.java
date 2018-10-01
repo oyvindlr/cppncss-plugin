@@ -1,7 +1,10 @@
 package hudson.plugins.helpers;
 
+import hudson.Util;
 import hudson.model.Actionable;
 import hudson.model.Job;
+import hudson.plugins.cppncss.parser.StatisticSummary;
+import hudson.plugins.cppncss.parser.StringStatisticSummary;
 
 /**
  * An action that is associated with a project.
@@ -72,4 +75,8 @@ abstract public class AbstractProjectAction<PROJECT extends Job<?, ?>>
 		return functionNcssViolationThreshold;
 	}
 
+
+    /** Get the summary to show above the report
+     */
+    public abstract StatisticSummary getStatisticSummary();
 }

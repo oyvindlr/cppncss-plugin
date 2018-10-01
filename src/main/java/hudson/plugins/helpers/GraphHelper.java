@@ -176,15 +176,7 @@ public class GraphHelper {
 					}
 					
 					public long getCollectedNumber(AbstractBuildReport action) {
-						Collection<Statistic> functionResults = action.getResults().getFunctionResults();
-						int ccnViolatedFunctions = 0;
-
-						int threshold = functionCcnViolationThreshold != null ? functionCcnViolationThreshold.intValue() : 0;
-		            	for (Statistic statistic : functionResults) {
-							if(statistic.getCcn() > threshold)
-								ccnViolatedFunctions ++;
-						}
-						return ccnViolatedFunctions;
+					    return action.getTotals().getFunctionTotal().getCcnViolations();
 					}
 				});
 			}
@@ -201,15 +193,7 @@ public class GraphHelper {
 					}
 					
 					public long getCollectedNumber(AbstractBuildReport action) {
-						Collection<Statistic> functionResults = action.getResults().getFunctionResults();
-		            	int ncssViolatedFunctions = 0;
-
-						int threshold = functionNcssViolationThreshold != null ? functionNcssViolationThreshold.intValue() : 0;
-		            	for (Statistic statistic : functionResults) {
-							if(statistic.getNcss() > threshold)
-								ncssViolatedFunctions ++;
-						}
-						return ncssViolatedFunctions;
+                        return action.getTotals().getFunctionTotal().getNcssViolations();
 					}
 				});
 			}
