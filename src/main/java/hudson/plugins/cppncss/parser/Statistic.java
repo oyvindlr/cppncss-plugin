@@ -35,6 +35,7 @@ public class Statistic implements Serializable {
     private long ccn;
     private long ncssViolations;
     private long ccnViolations;
+    private long maxCcn;
     private String parentElement;
 
 // -------------------------- STATIC METHODS --------------------------
@@ -120,6 +121,8 @@ public class Statistic implements Serializable {
             		s.setNcssViolations(oneIfIsViolation(s.getNcss(), ncssThreshold));
             		s.setCcn(Long.parseLong(data.get(functionValueNames[2]).trim()));
             		s.setCcnViolations(oneIfIsViolation(s.getCcn(), ccnThreshold));
+            		s.setFunctions(1);
+            		s.setMaxCcn(s.getCcn());
             		functionResults.add(s);
     			}
     			parser.next();
@@ -187,15 +190,30 @@ public class Statistic implements Serializable {
             }
         }
         setFileViolations(fileResults, functionResults);
+        setFileMaxCcn(fileResults, functionResults);
         result.setFunctionResults(functionResults);
         result.setFileResults(fileResults);
         return  result;
     }
+    
+    
+
+    private static void setFileMaxCcn(Collection<Statistic> fileResults, Collection<Statistic> functionResults) {
+        for (Statistic fileResult : fileResults) {
+            Collection<Statistic> functionsInFile = getFunctionResultsBelongingToFile(functionResults, fileResult.getName());
+            long fileMaxCcn = 0;
+            for (Statistic functionResult : functionsInFile) {
+                if (functionResult.ccn > fileMaxCcn)
+                    fileMaxCcn = functionResult.ccn;
+            }
+            fileResult.maxCcn = fileMaxCcn;
+        }             
+    }
+
 
     private static void setFileViolations(Collection<Statistic> fileResults, Collection<Statistic> functionResults) {
         for (Statistic fileResult : fileResults) {
-            //Get the functions that have as parent the name of the current file (Trying to do something Linq-like)
-            Collection<Statistic> functionsInFile = functionResults.stream().filter(fres -> fres.getParentElement().equals(fileResult.getName())).collect(Collectors.toList());
+            Collection<Statistic> functionsInFile = getFunctionResultsBelongingToFile(functionResults, fileResult.getName());
             long totalCcnViolations = 0, totalNcssViolations = 0;
             for (Statistic functionResult : functionsInFile) {
                 totalCcnViolations += functionResult.getCcnViolations();
@@ -204,6 +222,11 @@ public class Statistic implements Serializable {
             fileResult.setNcssViolations(totalNcssViolations);
             fileResult.setCcnViolations(totalCcnViolations);
         }       
+    }
+    
+    private static Collection<Statistic> getFunctionResultsBelongingToFile(Collection<Statistic> functionResults,
+            String fileName) {
+        return functionResults.stream().filter(fres -> fres.getParentElement().equals(fileName)).collect(Collectors.toList());
     }
     
     private static long oneIfIsViolation(long value, long threshold) {
@@ -273,6 +296,7 @@ public class Statistic implements Serializable {
         ccn += r.ccn;
         ccnViolations += r.ccnViolations;
         ncssViolations += r.ncssViolations;
+        maxCcn = Math.max(maxCcn, r.maxCcn);
     }
 
     public static Collection<Statistic> merge(Collection<Statistic>... results) {
@@ -363,6 +387,14 @@ public class Statistic implements Serializable {
         this.ncssViolations = ncssViolations;
     }
 
+    public long getMaxCcn() {
+        return maxCcn;
+    }
+
+    public void setMaxCcn(long maxCcn) {
+        this.maxCcn = maxCcn;
+    }
+
     /**
      * @deprecated this field is not really supposed to be used.
      */
@@ -397,6 +429,7 @@ public class Statistic implements Serializable {
         if (ncss != statistic.ncss) return false;
         if (ncssViolations != statistic.ncssViolations) return false;
         if (ccnViolations != statistic.ccnViolations) return false;
+        if (maxCcn != statistic.maxCcn) return false;
         if (!name.equals(statistic.name)) return false;
         if (owner != null ? !owner.equals(statistic.owner) : statistic.owner != null) return false;
 
@@ -418,6 +451,7 @@ public class Statistic implements Serializable {
                 ", ncss=" + ncss +
                 ", ncssViolations=" + ncssViolations +
                 ", ccnViolations=" + ccnViolations +
+                ", maxCcn=" + maxCcn +
                 '}';
     }
 
@@ -433,7 +467,7 @@ public class Statistic implements Serializable {
      * @since TODO
      */
     public StatisticSummary getStatisticSummary() {
-        return new FormattedStatisticSummary(ccn, functions, ncss, ccnViolations, ncssViolations);
+        return new FormattedStatisticSummary(ccn, functions, ncss, ccnViolations, ncssViolations, maxCcn);
     }
 
     /**
@@ -458,5 +492,6 @@ public class Statistic implements Serializable {
         this.ncss = that.ncss;
         this.ncssViolations = that.ncssViolations;
         this.ccnViolations = that.ccnViolations;
+        this.maxCcn = that.maxCcn;
     }
 }

@@ -31,12 +31,13 @@ public class StatisticTest extends TestCase {
         expected.setNcss(129);
         expected.setNcssViolations(0);
         expected.setCcnViolations(0);
+        expected.setMaxCcn(5);
 
         assertEquals(expected, Statistic.total(r.getFileResults()));
         
-        expected = new Statistic("");
-        expected.setCcn(24);
+
         expected.setNcss(59);
+        
         assertEquals(expected, Statistic.total(r.getFunctionResults()));
     }
 
@@ -51,6 +52,7 @@ public class StatisticTest extends TestCase {
         expected.setNcss(129);
         expected.setNcssViolations(0);
         expected.setCcnViolations(0);
+        expected.setMaxCcn(4);
 
         assertEquals(expected, Statistic.total(r.getFileResults()));
     }
@@ -70,6 +72,7 @@ public class StatisticTest extends TestCase {
         expected.setNcss(258);
         expected.setNcssViolations(0);
         expected.setCcnViolations(0);
+        expected.setMaxCcn(5);
         
         assertEquals(expected, Statistic.total(Statistic.merge(r1.getFileResults(), r2.getFileResults())));
     }

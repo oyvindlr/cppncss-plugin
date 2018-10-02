@@ -40,36 +40,42 @@ public final class FormattedStatisticSummary extends StatisticSummary {
     private final long wasCcn;
     private final long wasCcnViolations;
     private final long wasNcssViolations;
+    private final long wasMaxCcn;
     private final long functions;
     private final long ncss;
     private final long ccn;
     private final long ccnViolations;
     private final long ncssViolations;
+    private final long maxCcn;
 
     public FormattedStatisticSummary(long wasCcn, long wasFunctions, long wasNcss,
-            long wasCcnViolations, long wasNcssViolations, long ccn, long functions, 
-            long ncss, long ccnViolations, long ncssViolations) {
+            long wasCcnViolations, long wasNcssViolations, long wasMaxCcn, long ccn, long functions, 
+            long ncss, long ccnViolations, long ncssViolations, long maxCcn) {
         this.wasFunctions = wasFunctions;
         this.wasNcss = wasNcss;
         this.wasCcn = wasCcn;
         this.wasCcnViolations = wasCcnViolations;
         this.wasNcssViolations = wasNcssViolations;
+        this.wasMaxCcn = wasMaxCcn;
         this.functions = functions;
         this.ncss = ncss;
         this.ccn = ccn;
         this.ccnViolations = ccnViolations;
         this.ncssViolations = ncssViolations;
+        this.maxCcn = maxCcn;
         
     }
 
-    public FormattedStatisticSummary(long ccn, long functions, long ncss, long cnnViolations, long ncssViolations) {
-        this(0,0,0,0,0, ccn, functions, ncss, cnnViolations, ncssViolations);
+    public FormattedStatisticSummary(long ccn, long functions, long ncss, long cnnViolations, long ncssViolations,
+            long maxCcn) {
+        this(0, 0, 0, 0, 0, 0, ccn, functions, ncss, cnnViolations, ncssViolations, maxCcn);
         doCompare = false;
     }
 
     public FormattedStatisticSummary(@Nonnull Statistic was, @Nonnull Statistic now) {
         this(was.getCcn(), was.getFunctions(), was.getNcss(), was.getCcnViolations(), was.getNcssViolations(),
-                now.getCcn(), now.getFunctions(), now.getNcss(), now.getCcnViolations(), now.getNcssViolations());
+                was.getMaxCcn(), now.getCcn(), now.getFunctions(), now.getNcss(), now.getCcnViolations(),
+                now.getNcssViolations(), now.getMaxCcn());
     }
 
     public long getCcn() {
@@ -110,6 +116,7 @@ public final class FormattedStatisticSummary extends StatisticSummary {
                 + diff(wasNcss, ncss, "NCSS")
                 + diff(wasCcnViolations, ccnViolations, "CCN Violations")
                 + diff(wasNcssViolations, ncssViolations, "NCSS Violations")
+                + diff(wasMaxCcn, maxCcn, "Max CCN")
                 + "</ul>";
     }
 
