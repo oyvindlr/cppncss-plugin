@@ -1,6 +1,6 @@
 package hudson.plugins.cppncss;
 
-import hudson.model.AbstractProject;
+import hudson.model.Job;
 import hudson.model.ProminentProjectAction;
 import hudson.plugins.cppncss.parser.StatisticsResult;
 import hudson.plugins.helpers.AbstractProjectAction;
@@ -15,13 +15,13 @@ import org.kohsuke.stapler.StaplerResponse;
  * @since 08-Jan-2008 22:05:48
  */
 public class CppNCSSProjectIndividualReport extends
-		AbstractProjectReport<AbstractProject<?, ?>> implements
+		AbstractProjectReport<Job<?, ?>> implements
 		ProminentProjectAction {
 	private CppNCSSProjectFunctionIndividualReport cppFunction;
 	private Integer functionCcnViolationThreshold;
 	private Integer functionNcssViolationThreshold;
 
-	public CppNCSSProjectIndividualReport(AbstractProject<?, ?> project,
+	public CppNCSSProjectIndividualReport(Job<?, ?> project,
 			Integer functionCcnViolationThreshold,
 			Integer functionNcssViolationThreshold) {
 		super(project, functionCcnViolationThreshold,

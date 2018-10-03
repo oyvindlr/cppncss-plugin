@@ -1,7 +1,7 @@
 package hudson.plugins.cppncss.parser;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import hudson.model.AbstractBuild;
+import hudson.model.Run;
 import hudson.util.IOException2;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -27,7 +27,7 @@ public class Statistic implements Serializable {
      * @deprecated this field should not be used
      */
     @CheckForNull
-    private transient AbstractBuild<?, ?> owner;
+    private transient Run<?, ?> owner;
 
     private String name;
     private long functions;
@@ -400,11 +400,11 @@ public class Statistic implements Serializable {
      */
     @Deprecated
     @CheckForNull
-	public AbstractBuild<?, ?> getOwner() {
+	public Run<?, ?> getOwner() {
         return owner;
     }
 
-    public void setOwner(AbstractBuild<?, ?> owner) {
+    public void setOwner(Run<?, ?> owner) {
         this.owner = owner;
     }
     
