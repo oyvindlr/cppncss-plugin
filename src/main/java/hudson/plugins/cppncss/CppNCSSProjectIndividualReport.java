@@ -2,6 +2,7 @@ package hudson.plugins.cppncss;
 
 import hudson.model.Job;
 import hudson.model.ProminentProjectAction;
+import hudson.plugins.cppncss.parser.StatisticsResult;
 import hudson.plugins.helpers.AbstractProjectAction;
 
 import org.kohsuke.stapler.StaplerRequest;
@@ -37,7 +38,8 @@ public class CppNCSSProjectIndividualReport extends
 	public AbstractProjectAction getDynamic(String name, StaplerRequest req,
 			StaplerResponse rsp) {
 		if (cppFunction == null) {
-			cppFunction = new CppNCSSProjectFunctionIndividualReport(getProject(),
+		    StatisticsResult fileResult = getResults().singleFileResult(name);
+			cppFunction = new CppNCSSProjectFunctionIndividualReport(fileResult, getProject(),
 					functionCcnViolationThreshold,
 					functionNcssViolationThreshold);
 		}

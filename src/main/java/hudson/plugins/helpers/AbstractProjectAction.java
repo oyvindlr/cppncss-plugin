@@ -57,6 +57,15 @@ abstract public class AbstractProjectAction<PROJECT extends Job<?, ?>>
 	public boolean isGraphActive() {
 		return false;
 	}
+	
+	/**
+    * Override to control when the summary is shown above the report table
+    * 
+    * @return <code>true</code> if the action should show a summary above the report table.
+    */
+    public boolean isSummaryActive() {
+        return false;
+    }
 
 	/**
 	 * Override to define the graph name.

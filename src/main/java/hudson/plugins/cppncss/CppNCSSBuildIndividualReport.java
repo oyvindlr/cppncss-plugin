@@ -54,29 +54,12 @@ public class CppNCSSBuildIndividualReport extends
 	public void setBuildHealth(HealthReport healthReport) {
 		this.healthReport = healthReport;
 	}
-	
-	private String escapeName(String name) {
-	    return name.replace(':', '.').replace('\\', '.').replace('/', '.');
-	}
-	
-	private StatisticsResult singleFileResult(String name) {
-	    StatisticsResult result = new StatisticsResult();
-	    Predicate<Statistic> fileNamesMatch = s -> escapeName(s.getParentElement()).contains(name); 
-        Collection<Statistic> singleFileFunctionStats = getResults().getFunctionResults().stream()
-                .filter(fileNamesMatch).collect(Collectors.toList());
-        fileNamesMatch = s -> escapeName(s.getName()).contains(name);
-        Collection<Statistic> singleFileFileStats = getResults().getFileResults().stream()
-                .filter(fileNamesMatch).collect(Collectors.toList());
-        result.setFunctionResults(singleFileFunctionStats);
-        result.setFileResults(singleFileFileStats);
-        return result;
-    }
 
 	public AbstractBuildReport getDynamic(String name, StaplerRequest req,
 			StaplerResponse rsp) {
 //		if (cppFunction == null) {
 	    CppNcssBuildFunctionIndividualReport cppFunction = new CppNcssBuildFunctionIndividualReport(
-					singleFileResult(name), getFunctionCcnViolationThreshold(),
+					getResults().singleFileResult(name), getFunctionCcnViolationThreshold(),
 					getFunctionNcssViolationThreshold());
         //CppNcssBuildFunctionIndividualReport cppFunction = new CppNcssBuildFunctionIndividualReport(
         //getResults(), getFunctionCcnViolationThreshold(),

@@ -8,6 +8,10 @@ import org.kohsuke.stapler.StaplerResponse;
 
 import hudson.model.Job;
 import hudson.model.ProminentProjectAction;
+import hudson.model.Run;
+import hudson.plugins.cppncss.parser.Statistic;
+import hudson.plugins.cppncss.parser.StatisticsResult;
+import hudson.plugins.cppncss.parser.StatisticsTotalResult;
 import hudson.plugins.helpers.AbstractProjectAction;
 
 /**
@@ -16,12 +20,15 @@ import hudson.plugins.helpers.AbstractProjectAction;
  */
 public class CppNCSSProjectFunctionIndividualReport extends
 		CppNCSSProjectIndividualReport implements ProminentProjectAction {
+    
+    private final StatisticsResult results;
 
-	public CppNCSSProjectFunctionIndividualReport(Job<?, ?> project,
-			Integer functionCcnViolationThreshold,
+	public CppNCSSProjectFunctionIndividualReport(StatisticsResult results,
+	        Job<?, ?> project, Integer functionCcnViolationThreshold,
 			Integer functionNcssViolationThreshold) {
 		super(project, functionCcnViolationThreshold,
 				functionNcssViolationThreshold);
+		this.results = results;
 	}
 
 	private String fileName;
@@ -56,4 +63,25 @@ public class CppNCSSProjectFunctionIndividualReport extends
 	public String getDisplayName() {
 		return fileName;
 	}
+	
+	@Override
+    public StatisticsResult getResults() {
+        return results;
+    }
+
+    @Override
+    public StatisticsTotalResult getTotals() {
+        return StatisticsResult.total(results);
+    }
+    
+    @Override
+    public boolean isGraphActive() {
+        //We don't want to show the graph for a single file, since the graph contains only totals 
+        return false;
+    }
+    
+    @Override
+    public boolean isSummaryActive() {
+        return true;
+    }
 }
