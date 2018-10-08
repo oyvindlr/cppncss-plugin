@@ -5,6 +5,8 @@ import hudson.model.HealthReport;
 import hudson.plugins.cppncss.parser.Statistic;
 import hudson.model.Run;
 import hudson.plugins.cppncss.parser.StatisticsResult;
+import hudson.plugins.helpers.ScmBrowserLink;
+
 import java.util.Collection;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -22,6 +24,8 @@ public class CppNCSSBuildIndividualReport extends
 		AbstractBuildReport<Run<?, ?>> implements Action {
 
 	private HealthReport healthReport;
+	
+	private ScmBrowserLink link;
 
 	public CppNCSSBuildIndividualReport(StatisticsResult results,
 			Integer functionCcnViolationThreshold,
@@ -54,14 +58,39 @@ public class CppNCSSBuildIndividualReport extends
 	public void setBuildHealth(HealthReport healthReport) {
 		this.healthReport = healthReport;
 	}
+	
+    public void setScmBrowserLink(ScmBrowserLink link) {
+        this.link = link;
+    }
+
+    public boolean hasScmBrowserLink() {
+        return link != null;
+    }
+    
+    public String getLinkToLineNumber(String lineNumber) {     
+        if (link != null) {
+            link.setLineNumber(lineNumber);
+            return link.get();
+        }
+        return "";
+    }
 
 	public AbstractBuildReport getDynamic(String name, StaplerRequest req,
 			StaplerResponse rsp) {
+	    StatisticsResult fileResult = getResults().singleFileResult(name); 
 	    CppNcssBuildFunctionIndividualReport cppFunction = new CppNcssBuildFunctionIndividualReport(
-					getResults().singleFileResult(name), getFunctionCcnViolationThreshold(),
+					fileResult, getFunctionCcnViolationThreshold(),
 					getFunctionNcssViolationThreshold());
 		if (name.length() >= 1) {
-			cppFunction.setFileName(name);
+		    String fileName = name;
+		    if (fileResult.getFileResults().iterator().hasNext()) {
+		        fileName = fileResult.getFileResults().iterator().next().getName();
+		    }
+		    if (link != null) {
+		        link.setFilePath(fileName);
+		    }
+		    cppFunction.setScmBrowserLink(link);
+			cppFunction.setFileName(fileName);
 			cppFunction.setBuild(this.getBuild());
 			cppFunction.setFilereport(this);
 			return cppFunction;

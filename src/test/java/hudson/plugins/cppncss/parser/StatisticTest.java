@@ -100,4 +100,14 @@ public class StatisticTest extends TestCase {
         assertEquals(2, fileStats.getCcnViolations());
         assertEquals(5, fileStats.getNcssViolations());       
     }
+    
+    public void testLineNumber() throws Exception {
+        File inputFile = new File(getClass().getResource("ant-cppncss-report.xml").getFile()).getAbsoluteFile();
+
+        StatisticsResult r = Statistic.parse(inputFile, 0, 0);
+        
+        Statistic allocFuncStats = findMatching(r.getFunctionResults(), s -> s.getName().matches( "statistics_alloc__r.*"));
+        
+        assertEquals("29", allocFuncStats.getLineNumber());
+    }
 }

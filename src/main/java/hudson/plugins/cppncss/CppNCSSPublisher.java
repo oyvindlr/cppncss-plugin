@@ -1,18 +1,21 @@
 package hudson.plugins.cppncss;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import hudson.EnvVars;
 import hudson.Extension;
 import org.jenkinsci.Symbol;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
+import hudson.model.Environment;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 
 import hudson.plugins.helpers.BuildProxy;
 import hudson.plugins.helpers.Ghostwriter;
+import hudson.plugins.helpers.ScmBrowserLink;
 import hudson.plugins.helpers.health.HealthMetric;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
@@ -25,6 +28,7 @@ import java.util.Collection;
 
 import org.apache.commons.beanutils.ConvertUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 
 /**
  * TODO javadoc.
@@ -38,6 +42,7 @@ public class CppNCSSPublisher extends Recorder implements SimpleBuildStep {
     private Integer functionCcnViolationThreshold = 10;
     private Integer functionNcssViolationThreshold = 100;
     private CppNCSSHealthTarget[] targets;
+    private String linkText;
 
     @DataBoundConstructor
     public CppNCSSPublisher(String reportFilenamePattern, Integer functionCcnViolationThreshold, Integer functionNcssViolationThreshold, CppNCSSHealthTarget[] targets) {
@@ -48,9 +53,18 @@ public class CppNCSSPublisher extends Recorder implements SimpleBuildStep {
         
         this.targets = targets == null ? new CppNCSSHealthTarget[0] : targets;
     }
+    
+    @DataBoundSetter
+    public void setScmBrowserLinkText(String linkText) {
+        this.linkText = linkText;
+    }
 
     public String getReportFilenamePattern() {
         return reportFilenamePattern;
+    }
+    
+    public String getScmBrowserLinkText() {
+        return linkText;
     }
 
 	public Integer getFunctionCcnViolationThreshold() {
@@ -78,18 +92,21 @@ public class CppNCSSPublisher extends Recorder implements SimpleBuildStep {
         return BuildStepMonitor.NONE;
     }
 
-    protected Ghostwriter newGhostwriter() {
-        return new CppNCSSGhostwriter(reportFilenamePattern, functionCcnViolationThreshold, functionNcssViolationThreshold, targets);
+    private Ghostwriter newGhostwriter(ScmBrowserLink link) {
+        return new CppNCSSGhostwriter(reportFilenamePattern, functionCcnViolationThreshold, functionNcssViolationThreshold, link, targets);
     }
 
     @Override
     public void perform(Run<?,?> run, FilePath workspace, Launcher launcher, TaskListener listener) {
+        ScmBrowserLink link = createScmBrowserLink(run, listener);
         CppNCSSProjectIndividualReport report = new CppNCSSProjectIndividualReport(run.getParent(), functionCcnViolationThreshold, functionNcssViolationThreshold);
+        report.setScmBrowserLink(link);
         ActionGetter getter = new ActionGetter();
         getter.addProjectAction(report);
         run.addAction(getter);
+        
         try {
-            BuildProxy.doPerform(newGhostwriter(), run, workspace, listener);
+            BuildProxy.doPerform(newGhostwriter(link), run, workspace, listener);
         } catch (IOException | InterruptedException e) {
             run.setResult(Result.FAILURE);
             e.printStackTrace(listener.getLogger());
@@ -97,6 +114,21 @@ public class CppNCSSPublisher extends Recorder implements SimpleBuildStep {
     }
 
  
+    private ScmBrowserLink createScmBrowserLink(Run<?, ?> run, TaskListener listener) {
+        if (linkText == null || linkText.isEmpty())
+            return null;
+        try {
+            EnvVars env = run.getEnvironment(listener);
+            String hash = env.get("GIT_COMMIT");
+            ScmBrowserLink link = new ScmBrowserLink(linkText, hash);
+            return link;
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace(listener.getLogger());
+            return null;
+        }
+    }
+
+
     @Extension @Symbol("cppncss")
     public static final class DescriptorImpl extends BuildStepDescriptor<Publisher> {
 

@@ -11,6 +11,7 @@ import hudson.plugins.cppncss.parser.Statistic;
 import hudson.plugins.cppncss.parser.StatisticsResult;
 import hudson.plugins.helpers.BuildProxy;
 import hudson.plugins.helpers.Ghostwriter;
+import hudson.plugins.helpers.ScmBrowserLink;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,12 +39,15 @@ public class CppNCSSGhostwriter
 	private final Integer functionCcnViolationThreshold;
 
 	private final Integer functionNcssViolationThreshold;
+	
+	private final ScmBrowserLink browserLink;
 
-    public CppNCSSGhostwriter(String reportFilenamePattern, Integer functionCcnViolationThreshold, Integer functionNcssViolationThreshold, CppNCSSHealthTarget... targets) {
+    public CppNCSSGhostwriter(String reportFilenamePattern, Integer functionCcnViolationThreshold, Integer functionNcssViolationThreshold, ScmBrowserLink browserLink, CppNCSSHealthTarget... targets) {
         this.reportFilenamePattern = reportFilenamePattern;
 		this.functionCcnViolationThreshold = functionCcnViolationThreshold;
 		this.functionNcssViolationThreshold = functionNcssViolationThreshold;
         this.targets = targets;
+        this.browserLink = browserLink;
     }
 
     @Override
@@ -99,7 +103,7 @@ public class CppNCSSGhostwriter
         }
         if (results != null) {
             CppNCSSBuildIndividualReport action = new CppNCSSBuildIndividualReport(results, functionCcnViolationThreshold, functionNcssViolationThreshold);
-            
+            action.setScmBrowserLink(browserLink);
             if (targets != null && targets.length > 0) {
                 HealthReport r = null;
                 for (CppNCSSHealthTarget target : targets) {

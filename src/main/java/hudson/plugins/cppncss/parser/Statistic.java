@@ -36,6 +36,7 @@ public class Statistic implements Serializable {
     private long ncssViolations;
     private long ccnViolations;
     private long maxCcn;
+    private String lineNumber;//Used for functions only
     private String parentElement;
 
 // -------------------------- STATIC METHODS --------------------------
@@ -115,8 +116,10 @@ public class Statistic implements Serializable {
             		if(data.get("name").indexOf(" at ") > 0){
             			String fileStr = data.get("name").substring(data.get("name").indexOf(" at ")+4);
             			String file = fileStr.substring(0,fileStr.lastIndexOf(":"));
+            			String lineNo = fileStr.substring(fileStr.lastIndexOf(":") + 1).trim();
             			s.setParentElement(file);
-            		}
+            			s.setLineNumber(lineNo);
+            		}            		
             		s.setNcss(Long.parseLong(data.get(functionValueNames[1]).trim()));
             		s.setNcssViolations(oneIfIsViolation(s.getNcss(), ncssThreshold));
             		s.setCcn(Long.parseLong(data.get(functionValueNames[2]).trim()));
@@ -394,6 +397,19 @@ public class Statistic implements Serializable {
     public void setMaxCcn(long maxCcn) {
         this.maxCcn = maxCcn;
     }
+
+    @CheckForNull
+    public String getLineNumber() {
+        return lineNumber;
+    }
+
+
+
+    public void setLineNumber(String lineNumber) {
+        this.lineNumber = lineNumber;
+    }
+
+
 
     /**
      * @deprecated this field is not really supposed to be used.

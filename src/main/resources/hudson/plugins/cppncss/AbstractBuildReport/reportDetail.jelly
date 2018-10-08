@@ -29,7 +29,18 @@
                         <j:set var="ccnclass" value="warn"/>
                     </j:if>
                     <tr>
-                        <th align="left">${r.name.substring(0,r.name.indexOf(')') + 1)}</th>
+                        <th align="left">
+                        <j:choose>                        
+                        <j:when test="${it.hasScmBrowserLink()}">
+                            <a target="_blank" href="${it.getLinkToLineNumber(r.lineNumber)}">
+                            ${r.name.substring(0,r.name.indexOf(')') + 1)}                            
+                            </a>
+                        </j:when>
+                        <j:otherwise>
+                            ${r.name.substring(0,r.name.indexOf(')') + 1)}
+                        </j:otherwise>
+                        </j:choose>
+                        </th>
                         <td align="right"  class="${ncssclass}">${r.ncss}</td>
                         <td align="right"  class="${ccnclass}">${r.ccn}</td>
                     </tr>

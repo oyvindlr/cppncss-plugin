@@ -20,6 +20,13 @@
              description="If the Non Commenting Source Statements of a function larger than this number, it will be counted on the trend chart.">
         <f:textbox name="cppncss.functionNcssViolationThreshold" value="${instance.functionNcssViolationThreshold}"/>
     </f:entry>
+    <f:entry title="Link to code browser" description="If filled out, the report will include links to your git code repository browser. 
+    Use the variable names $file, $hash and $line where the file path, git commit hash and line number should go respectively.
+    For example, for Stash/Bitbucket server, you would write the link as 
+    &lt;p&gt;http://&amp;lt;your-stash-url.com&amp;gt;/&amp;lt;stash-project&amp;gt;/repos/&amp;lt;git-repo&amp;gt;/browse/$file?at=$hash#$line&lt;/p&gt;
+    Your complexity report must contain file paths which are relative to &lt;a href='ws/'&gt;the module root&lt;/a&gt; for this to work correctly.">
+    	<f:textbox name="cppncss.scmBrowserLinkText" value="${instance.scmBrowserLinkText}"/>
+    </f:entry>
     <f:entry title="Health Reports">
         <f:repeatable var="targets" varStatus="instStatus" items="${instance.targets}">
             <bh:row name="cppncss.targets" value="${targets}" metrics="${descriptor.metrics}" firstRow="false"
