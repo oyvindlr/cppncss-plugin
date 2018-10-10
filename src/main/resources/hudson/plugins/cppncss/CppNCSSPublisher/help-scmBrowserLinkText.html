@@ -1,0 +1,10 @@
+If this field is not empty, the report will include links to your git code repository browser. Use the variable names <code>$file</code>, <code>$hash</code> and <code>$line</code>
+where the file path, git commit hash and line number should go respectively.
+For example, for Stash/Bitbucket server, you would write the link as 
+ <p>http://&lt;your-stash-url.com&gt;/&lt;stash-project&gt;/repos/&lt;git-repo&gt;/browse/$file?at=$hash#$line</p>
+ Your complexity report must contain file paths which are relative to <a href='ws/'>the module root</a> for this to work correctly.
+ <p><span style="color:red"><i>Note:</i></span> In a multibranch pipeline job, the variable <code>$hash</code> will not work. 
+ Instead, use environment variables. For example: </p>
+  <p>scmBrowserLinkText: 'http://blabla.com/?file=$file;git-hash=' + ${env.GIT_COMMIT} + ';id=$id'</p>
+ The above works for a declarative pipeline. For a scripted pipeline, use <code>smVars = checkout scm</code>, 
+ and replace <code>${env.GIT_COMMIT}</code> above by <code>${scmVars.GIT_COMMIT}</code>
