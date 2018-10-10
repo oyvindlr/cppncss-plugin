@@ -83,14 +83,15 @@ public class CppNCSSGhostwriter
         FilePath[] paths = build.getExecutionRootDir().list(reportFilenamePattern);
         StatisticsResult results = null;
         Set<String> parsedFiles = new HashSet<String>();
+        long ncssThreshold = functionNcssViolationThreshold == null ? 0 : functionNcssViolationThreshold.longValue();
+        long ccnThreshold = functionCcnViolationThreshold == null ? 0 : functionCcnViolationThreshold.longValue();
         for (FilePath path : paths) {
             listener.getLogger().println("Parsing CppNCSS report file \"" + path.getName() + "\"");
             final String pathStr = path.getRemote();
             if (!parsedFiles.contains(pathStr)) {
                 parsedFiles.add(pathStr);
                 try {
-                    StatisticsResult result = Statistic.parse(new File(pathStr), functionNcssViolationThreshold,
-                            functionCcnViolationThreshold);
+                    StatisticsResult result = Statistic.parse(new File(pathStr), ncssThreshold, ccnThreshold);
                     if (results == null) {
                         results = result;
                     } else {
