@@ -2,8 +2,6 @@ package hudson.plugins.helpers;
 
 import hudson.FilePath;
 import hudson.Launcher;
-import hudson.model.AbstractBuild;
-import hudson.model.BuildListener;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
@@ -26,14 +24,6 @@ public abstract class AbstractPublisherImpl extends Recorder implements SimpleBu
      * @return returns the configured Ghostwriter.
      */
     protected abstract Ghostwriter newGhostwriter();
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, final BuildListener listener)
-            throws InterruptedException, IOException {
-        return BuildProxy.doPerform(newGhostwriter(), build, listener);
-    }
 
     @Override
     public void perform(Run<?,?> run, FilePath workspace, Launcher launcher, TaskListener listener) {
