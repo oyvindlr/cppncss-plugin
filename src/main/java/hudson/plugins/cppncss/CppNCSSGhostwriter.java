@@ -2,6 +2,7 @@ package hudson.plugins.cppncss;
 
 import hudson.AbortException;
 import hudson.FilePath;
+import hudson.model.AbstractBuild;
 import hudson.model.Action;
 import hudson.model.HealthReport;
 import hudson.model.Result;
@@ -28,7 +29,7 @@ import org.xmlpull.v1.XmlPullParserException;
  */
 public class CppNCSSGhostwriter
         implements Ghostwriter,
-        Ghostwriter.MasterGhostwriter,
+        Ghostwriter.MasterGhostwriter2,
         Ghostwriter.SlaveGhostwriter {
 
     private final String reportFilenamePattern;
@@ -50,24 +51,21 @@ public class CppNCSSGhostwriter
     public boolean performFromMaster(Run<?, ?> build, FilePath executionRoot, TaskListener listener)
             throws InterruptedException, IOException {
     	if (targets != null && targets.length > 0) {
-	    	List<Action> actions = build.getActions();
+	    	List<CppNCSSBuildIndividualReport> actions = build.getActions(CppNCSSBuildIndividualReport.class);
 	    	Result buildResult = build.getResult();
 	    	if (buildResult == null) {
 	    	    // The entire method need to be modified to support Pipeline
 	    	    throw new AbortException("Cannot perform publisher for a running job. The plugin needs to be updated to support plugins like Any Build Step. File a JIRA ticket if you need that");
             }
 
-	    	for (Action action : actions) {
-				if(action instanceof CppNCSSBuildIndividualReport) {
-					CppNCSSBuildIndividualReport cppncssAction = (CppNCSSBuildIndividualReport)action;
-					cppncssAction.setBuild(build);
-	                for (CppNCSSHealthTarget target : targets) {
-	                    Result result = target.evaluateStability(cppncssAction);
-	                    if(result.isWorseThan(buildResult)){
-	                    	buildResult = result;
-	                    }
-	                }
-				}
+	    	for (CppNCSSBuildIndividualReport action : actions) {
+                action.setBuild(build);
+                for (CppNCSSHealthTarget target : targets) {
+                    Result result = target.evaluateStability(action);
+                    if(result.isWorseThan(buildResult)){
+                        buildResult = result;
+                    }
+                }
 			}
 	    	build.setResult(buildResult);
     	}

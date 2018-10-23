@@ -98,12 +98,12 @@ public final class BuildProxy implements Serializable {
         }
 
         // finally, on to the master
-
-        final Ghostwriter.MasterGhostwriter masterGhostwriter = Ghostwriter.MasterGhostwriter.class.cast(ghostwriter);
-
-        return masterGhostwriter == null
-                || masterGhostwriter.performFromMaster(run, workspace, listener);
-		
+        if (ghostwriter instanceof Ghostwriter.MasterGhostwriter2) {
+            return ((Ghostwriter.MasterGhostwriter2)ghostwriter).performFromMaster(run, workspace, listener);
+        } else if (ghostwriter instanceof Ghostwriter.MasterGhostwriter && run instanceof AbstractBuild) {
+            return ((Ghostwriter.MasterGhostwriter) ghostwriter).performFromMaster((AbstractBuild<?, ?>) run, workspace, listener);
+        }
+        return true;
 	}
 
 	//TODO: this logic undermines error propagation in the code

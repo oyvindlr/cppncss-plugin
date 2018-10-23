@@ -2,22 +2,14 @@ package hudson.plugins.cppncss;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.Extension;
+import hudson.plugins.helpers.AbstractPublisherImpl;
 import org.jenkinsci.Symbol;
-import hudson.FilePath;
-import hudson.Launcher;
 import hudson.model.AbstractProject;
-import hudson.model.Result;
-import hudson.model.Run;
-import hudson.model.TaskListener;
-import hudson.plugins.helpers.BuildProxy;
 import hudson.plugins.helpers.Ghostwriter;
 import hudson.plugins.helpers.health.HealthMetric;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
-import hudson.tasks.Recorder;
-import jenkins.tasks.SimpleBuildStep;
-import java.io.IOException;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 
@@ -27,7 +19,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
  * @author Stephen Connolly
  * @since 08-Jan-2008 21:24:06
  */
-public class CppNCSSPublisher extends Recorder implements SimpleBuildStep {
+public class CppNCSSPublisher extends AbstractPublisherImpl {
 
     private String reportFilenamePattern;
     private Integer functionCcnViolationThreshold = 10;
@@ -67,18 +59,9 @@ public class CppNCSSPublisher extends Recorder implements SimpleBuildStep {
         return BuildStepMonitor.NONE;
     }
 
-    private Ghostwriter newGhostwriter() {
-        return new CppNCSSGhostwriter(reportFilenamePattern, functionCcnViolationThreshold, functionNcssViolationThreshold, targets);
-    }
-
     @Override
-    public void perform(Run<?,?> run, FilePath workspace, Launcher launcher, TaskListener listener) {
-        try {
-            BuildProxy.doPerform(newGhostwriter(), run, workspace, listener);
-        } catch (IOException | InterruptedException e) {
-            run.setResult(Result.FAILURE);
-            e.printStackTrace(listener.getLogger());
-        }
+    public Ghostwriter newGhostwriter() {
+        return new CppNCSSGhostwriter(reportFilenamePattern, functionCcnViolationThreshold, functionNcssViolationThreshold, targets);
     }
 
     @Extension @Symbol("cppncss")
