@@ -2,6 +2,7 @@ package hudson.plugins.cppncss;
 
 import hudson.AbortException;
 import hudson.FilePath;
+import hudson.model.AbstractBuild;
 import hudson.model.Action;
 import hudson.model.HealthReport;
 import hudson.model.Result;
@@ -28,7 +29,7 @@ import org.xmlpull.v1.XmlPullParserException;
  */
 public class CppNCSSGhostwriter
         implements Ghostwriter,
-        Ghostwriter.MasterGhostwriter,
+        Ghostwriter.MasterGhostwriter2,
         Ghostwriter.SlaveGhostwriter {
 
     private final String reportFilenamePattern;
